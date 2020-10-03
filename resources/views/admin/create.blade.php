@@ -9,7 +9,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form action="{{route('user.store')}}" id="form_create_product">
+                <form method="post" id="form_create_product" action="{{route('products.store')}}" enctype="multipart/form-data">
                     @csrf
                     <div class="form-group">
                         <label>Name</label>
@@ -24,15 +24,16 @@
                         <label>Quantity</label>
                         <input  class="form-control"  placeholder="Quantity" name="quantity" id="create_quantity">
                     </div>
-{{--                    <div class="form-group">--}}
-{{--                        <label>User_id</label>--}}
-{{--                        <input  class="form-control"  placeholder="User_id">--}}
-{{--                    </div>--}}
+                    <div class="form-group">
+                        <label for="exampleFormControlFile1">Upload image</label>
+                        <input type="file" name="image" class="form-control-file" id="">
+                    </div>
+                    <br>
                     <div class="form-group">
                         <label>Description</label>
                         <input  class="form-control"  placeholder="Description" name="description" id="create_description">
                     </div>
-                    <button id ="btn_create_product" type="button" class="btn btn-primary">Submit</button>
+                    <button id="btn_create_product" data-dismiss="modal" data-action="{{route('products.store')}}" type="button" class="btn btn-primary">Submit</button>
                 </form>
             </div>
 
