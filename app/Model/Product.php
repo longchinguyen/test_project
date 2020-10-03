@@ -2,42 +2,33 @@
 
 namespace App\Model;
 
-use http\Env\Request;
 use Illuminate\Database\Eloquent\Model;
-
+define('PRODUCT_PATH','images/');
 class Product extends Model
 {
     protected $table = 'products';
-    protected $fillable = ['name', 'price', 'user_id', 'quantity', 'description'];
 
+    protected $fillable = ['name', 'price', 'quantity', 'description','image'];
 
-    public function getAllProduct()
+    public function users()
     {
-        $product = $this->all();
-
-        return $product;
+        return $this->belongsTo(User::class, 'users_id', 'id');
     }
 
-    public function getProduct($id)
+    public function search($data)
     {
-        $product = $this->findOFail($id);
-
-        return $product;
+        return Product::withName($data['name'])->latest('id')->paginate($data['quantity']);
     }
 
-    public function createProduct($attribute)
+    public function scopeWithName($query, $search)
     {
-        $attribute['user_id'] = auth()->id();
-        $product = $this->create($attribute);
-
-        return $product;
+        $search = trim($search);
+        return $query->where(function ($query) use ($search) {
+            $query->where('price', 'LIKE', "%$search%")
+                ->orWhere('name', 'LIKE', "%$search%")
+                ->orWhere('quantity', 'LIKE', "%$search%")
+                ->orWhere('description', 'LIKE', "%$search%");
+        });
     }
-
-    public function updateProduct($attribute)
-    {
-        $product = $this->update($attribute);
-        return $product;
-    }
-
 }
 

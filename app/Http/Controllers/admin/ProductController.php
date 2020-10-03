@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers\admin;
 
-use App\Http\Requests\ProductRequest;
-use App\Model\Product;
 use App\Http\Controllers\Controller;
+use App\Model\Product;
+use App\Traits\HandelImage;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-
 
 class ProductController extends Controller
 {
+    use HandelImage;
+
     protected $product;
 
     public function __construct(Product $product)
@@ -20,61 +20,66 @@ class ProductController extends Controller
 
     public function index()
     {
-//        dd(Hash::make('12345'));
-        $products = $this->product->getAllProduct();
-
-        return view("admin.index", compact('products'));
+        return view("admin.index");
     }
 
-
-    public function store(ProductRequest $request)
+    public function store(Request $request)
     {
-        $attribute = $request->all();
-        $product = $this->product->createProduct($attribute);
+        $data = $request->except('image');
+        $data['user_id'] = auth()->id();
+        $data['image'] = '';
+        $product = $this->product->create($data);
+        $this->createImage($request, $product);
+
         return response()->json([
-            'message' => 'update success',
-            'data' => $product,
-            'code' => 201
-        ], 201);
+            'message' => 'create success',
+            'product' => $product,
+            'status' => 200
+        ], 200);
     }
 
     public function update(Request $request, $id)
     {
-        $product = $this->product->getProduct($id);
-        $product->updateProduct($request->all());
+        $product = $this->product->findOrFail($id);
+        $data = $request->except('image');
+        $data['image'] = $this->updateImage($request, $product->image);
+        $product->update($data);
 
-        return response()->json([
-            'message' => 'update success',
-            'data' => $product,
-            'code' => 200
-        ], 200);
+        return response()->json(
+            [
+                'message' => 'update success',
+                'product' => $product,
+                'code' => 200
+            ],
+            200);
     }
 
-    public function getData($id)
+    public function show($id)
     {
-        $product = $this->product->getProduct($id);
+        $product = $this->product->findOrFail($id);
 
         return response()->json([
             'message' => 'get data success',
-            'data' => $product,
+            'product' => $product,
             'code' => 200
         ], 200);
-    }
-
-    public function table()
-    {
-        $products = $this->product->getAllProduct();
-
-        return view("admin.table", compact('products'));
     }
 
     public function destroy($id)
     {
-        $product = $this->product->destroy($id);
-
+        $this->product->destroy($id);
         return response()->json([
             'message' => 'delete product success',
-            'code' => 204
-        ], 204);
+            'code' => 200
+        ], 200);
+    }
+
+    public function search(Request $request)
+    {
+        $data['name'] = $request->name ?? null;
+        $data['quantity'] = $request->quantity ?? 5;
+        $products = $this->product->search($data);
+
+        return view('admin.table', compact('products'));
     }
 }

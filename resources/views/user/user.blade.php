@@ -1,52 +1,44 @@
 @extends('admin.master');
-@section('conten')
+@section('content')
     <div class="row">
         <div class="col-md-12">
             <!-- Button trigger modal -->
-            <button id="btn_create" type="button" class="btn btn-primary" data-action="{{route('user.index')}}" data-toggle="modal" data-target="#exampleModal"
-                    style="position: relative;top:-30px">
-                Create
+            <button id="btn_create" type="button" class="btn btn-primary"
+                    data-toggle="modal" data-target="#exampleModal" style="margin-left: -636px;margin-top: 10px"
+                    >
+                Add
             </button>
             @include('user.create')
-            <div class="card" >
-                <div class="card-header text-center">
-                    <h2>Users</h2>
+            @include('user.update')
+            <div class="card">
+                <div class="card-header text-center" >
+                    <h2 style="text-align: left">Users</h2>
+
+                    <form data-action="{{route('user.search')}}" id="form-search_user">
+                        <div class="input-group md-form form-sm form-1 pl-0">
+                            <div class="input-group-prepend">
+                            <span class="input-group-text purple lighten-3" id="basic-text1"><i
+                                    class="fas fa-search text-white" aria-hidden="true"></i></span>
+                            </div>
+                            <input id="btn_search_product"
+                                   class="form-control my-0 py-1" name="name" type="text" placeholder="Search"
+                                   aria-label="Search">
+                        </div>
+                        <button id="btn_create" type="button" class="btn btn-primary" data-toggle="modal"
+                                data-target="#exampleModal" style="margin-left: -636px;margin-top: 10px">
+                            Add
+                        </button>
+                    </form>
                 </div>
                 <div class="card-body">
-                    <div class="table-responsive" id="table_user" >
-                        <table class="table table-hover">
-                            <thead class="text-primary">
-                            <th>ID</th>
-                            <th>Name</th>
-                            <th>Email</th>
+                    <div class="table-responsive" id="table_list_user" >
 
-                            </thead>
-                            <tbody>
-                            @foreach($users as $user)
-                                <tr>
-                                    <td>{{$user->id}}</td>
-                                    <td>{{ $user->name }}</td>
-                                    <td>{{$user->email}}</td>
-                                    <td>
-                                        <a id="btn_open_modal_update"
-{{--                                           data-action="{{route('user.getData',['id'=>$product->id])}}"--}}
-{{--                                           data-url="{{route('product.update',['id'=>$product->id])}}"--}}
-                                           class="btn btn-success" data-toggle="modal"
-                                           data-target="#exampleModal1">Edit</a>
-                                    </td>
-                                    <td>
-                                        <a href="" class="btn btn-danger">Delete</a>
-                                    </td>
-                                </tr>
-                            @endforeach
-                            </tbody>
-                        </table>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 @endsection
-@section('ujs')
-    <script src="admin/user/u_index.js"></script>
+@section('js')
+    <script src="{{asset('admin/user/index.js')}}"></script>
 @endsection
